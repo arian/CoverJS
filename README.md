@@ -20,7 +20,7 @@ statements, which should result in a more precise result.
  - HTML
  - Text
 
- ### CLI Usage
+### CLI Usage
 
 To instrument the code, CoverJS comes with a CLI tool:
 
