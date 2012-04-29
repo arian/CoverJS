@@ -38,6 +38,16 @@ var flow = new Async();
 
 var processFile = function(file){
 
+	file = path.normalize(file);
+
+	var ext = path.extname(file);
+	if (ext && ext != '.js'){
+		console.warn('ERROR:'.red.inverse + ' ' + file + ' is not a JavaScript file');
+		return function(ready){
+			ready();
+		};
+	}
+
 	return function(ready){
 
 		var queue = new Queue();
@@ -79,6 +89,7 @@ var processFile = function(file){
 
 		}).push(function(next){
 
+			console.warn(('instrumenting ' + file).blue);
 			var instrument = new Instrument(code, file);
 			instrumented   = instrument.instrument();
 
@@ -90,7 +101,7 @@ var processFile = function(file){
 			var newDir = path.dirname(newFile);
 
 			fs.mkdir(newDir, 511 /* 0777 */, true, function(err){
-				if (err) throw err;
+				if (err && err.code != 'EEXIST') throw err;
 				next();
 			});
 
