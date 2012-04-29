@@ -48,3 +48,7 @@ The output stream can be redirected to a file using
 	node test.js > report.html
 
 so the result can be viewed in a browser
+
+#### Screenshot
+
+![Screenshot](http://i.imgur.com/lxGpb.png)
