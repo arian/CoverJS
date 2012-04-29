@@ -1,0 +1,24 @@
+{
+  "author": "Arian Stolwijk (http://github.com/arian)",
+  "name": "coverjs",
+  "description": "JSCoverage compatible JavaScript code coverage tool",
+  "version": "0.0.1",
+  "repository": {
+    "url": "git://github.com/arian/classy.git"
+  },
+  "main": "cover.js",
+  "dependencies": {
+    "esprima": "0.9",
+    "escodegen": "0.x",
+    "prime": "0.0.5-alpha",
+    "node-fs": "0.1"
+  },
+  "devDependencies": {
+    "mocha": "1.0",
+    "expect.js": "0.1"
+  },
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
