@@ -11,7 +11,9 @@
     "esprima": "0.9",
     "escodegen": "0.x",
     "prime": "0.0.5-alpha",
-    "node-fs": "0.1"
+    "node-fs": "0.1",
+    "Supersonic": "0.x",
+    "colors": "0.6"
   },
   "devDependencies": {
     "mocha": "1.0",
