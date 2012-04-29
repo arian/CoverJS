@@ -7,6 +7,9 @@
     "url": "git://github.com/arian/classy.git"
   },
   "main": "cover.js",
+  "bin": {
+    "coverjs": "./bin/coverjs"
+  },
   "dependencies": {
     "esprima": "0.9",
     "escodegen": "0.x",
