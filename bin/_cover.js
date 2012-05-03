@@ -14,8 +14,11 @@ var dir;
 var recursive = false;
 var excludes = [];
 
-for (var i = 2; i < process.argv.length; i++){
-	var arg = process.argv[i];
+var args = process.argv.slice(2);
+if (!args.length) args.push('--help');
+
+for (var i = 0; i < args.length; i++){
+	var arg = args[i];
 
 	if (arg == '--version' || arg == '-v'){
 		console.log(pack.version);
@@ -24,7 +27,7 @@ for (var i = 2; i < process.argv.length; i++){
 	}
 
 	if (arg == '--output' || arg == '-o'){
-		dir = process.argv[++i];
+		dir = args[++i];
 		continue;
 	}
 
@@ -34,7 +37,7 @@ for (var i = 2; i < process.argv.length; i++){
 	}
 
 	if (arg == '--exclude' || arg == '-e'){
-		excludes.push(process.argv[++i]);
+		excludes.push(args[++i]);
 		continue;
 	}
 
@@ -111,7 +114,6 @@ var processFile = function(file){
 						files.forEach(function(_file){
 
 							var __file = path.normalize(file + '/' + _file);
-							console.log(__file, excludes);
 							if (_file != '..' && _file != '.' && excludes.indexOf(__file) == -1){
 
 								var fn = processFile(file + '/' + _file);
