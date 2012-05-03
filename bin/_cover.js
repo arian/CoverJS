@@ -11,6 +11,7 @@ var Instrument = require('../lib/Instrument');
 var files = [];
 var dir;
 var recursive = false;
+var excludeDir = [];
 
 for (var i = 2; i < process.argv.length; i++){
 	var arg = process.argv[i];
@@ -25,7 +26,12 @@ for (var i = 2; i < process.argv.length; i++){
 		continue;
 	}
 
-	files.push(arg);
+  if (arg == '--exclude' || arg == '-e'){
+    excludeDir.push(process.argv[++i]);
+    continue;
+  }
+
+  files.push(arg);
 
 }
 
@@ -40,14 +46,6 @@ var processFile = function(file){
 
 	file = path.normalize(file);
 
-	var ext = path.extname(file);
-	if (ext && ext != '.js'){
-		console.warn('ERROR:'.red.inverse + ' ' + file + ' is not a JavaScript file');
-		return function(ready){
-			ready();
-		};
-	}
-
 	return function(ready){
 
 		var queue = new Queue();
@@ -59,13 +57,33 @@ var processFile = function(file){
 			fs.stat(file, function(err, stat){
 				if (err) console.warn(('ERROR:').red.invert + ('Could not open ' + file).red);
 				else if (stat.isFile()){
-					next();
+          var ext = path.extname(file);
+          if (ext != '.js'){
+            console.warn('ERROR:'.red.inverse + ' ' + file + ' is not a JavaScript file');
+            finish(false);
+          } else {
+            next();
+          }
 				} else if (recursive && stat.isDirectory()){
 					console.warn(('Recursing into ' + file).yellow);
 					fs.readdir(file, function(err, files){
 						if (err) throw err;
 						files.forEach(function(_file){
-							if (_file != '..' || _file != '.') flow.push(processFile(file + '/' + _file));
+							if (_file != '..' || _file != '.') {
+
+                var shouldExclude = false;
+
+                for (var i=0; i<excludeDir.length; i++) {
+                  var exclude = excludeDir[i];
+                  var basename = path.basename(_file);
+                  if (exclude == basename) {
+                    shouldExclude = true;
+                    break;
+                  }
+                }
+
+                if (!shouldExclude) flow.push(processFile(file + '/' + _file));
+              }
 						});
 						finish(false);
 					});
@@ -79,7 +97,7 @@ var processFile = function(file){
 
 			fs.readFile(file, function(err, data){
 				if (err){
-					console.warn(('ERROR:').red.invert + ('Could not open ' + file).red);
+					console.warn(('ERROR:').red.inverse + (' Could not open ' + file).red);
 					finish(false);
 				} else {
 					code = data + '';
