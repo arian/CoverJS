@@ -5,16 +5,23 @@ var path       = require('path');
 var Async      = require('Supersonic').Async;
 var Queue      = require('Supersonic').Queue;
 var colors     = require('colors');
+var pack       = require('../package.json');
 var Instrument = require('../lib/Instrument');
 
 // options
 var files = [];
 var dir;
 var recursive = false;
-var excludeDir = [];
+var excludes = [];
 
 for (var i = 2; i < process.argv.length; i++){
 	var arg = process.argv[i];
+
+	if (arg == '--version' || arg == '-v'){
+		console.log(pack.version);
+		process.exit(0);
+		break;
+	}
 
 	if (arg == '--output' || arg == '-o'){
 		dir = process.argv[++i];
@@ -26,25 +33,59 @@ for (var i = 2; i < process.argv.length; i++){
 		continue;
 	}
 
-  if (arg == '--exclude' || arg == '-e'){
-    excludeDir.push(process.argv[++i]);
-    continue;
-  }
+	if (arg == '--exclude' || arg == '-e'){
+		excludes.push(process.argv[++i]);
+		continue;
+	}
 
-  files.push(arg);
+	if (arg == '--help' || arg == '-h'){
+
+		var help = '\n\n' +
+			'  Usage: coverjs [options] <files>\n\n' +
+			'  Options:\n\n' +
+			'    -h, --help                   output usage information\n' +
+			'    -v, --version                output version information\n' +
+			'    -o, --output <directory>     directory to output the instrumented files\n' +
+			'    -r, --recursive              recurse in subdirectories\n' +
+			'    -x, --exclude <directories>  exclude these directories' +
+			'\n\n';
+
+		console.log(help);
+		process.exit(0);
+		break;
+
+	}
+
+	files.push(arg);
 
 }
 
+// normalize dir
 if (!dir){
 	console.warn('the --output option is required');
 	process.exit(1);
+} else {
+	dir = path.normalize(dir);
 }
 
+// normalize exclude files/directories
+excludes.map(function(dir){
+	return path.normalize(dir);
+});
+
+// async flow
 var flow = new Async();
 
+// return a function which executes a series of actions
 var processFile = function(file){
 
 	file = path.normalize(file);
+
+	var ext = path.extname(file);
+	if (ext && ext != '.js'){
+		console.warn('ERROR:'.red.inverse + ' ' + file + ' is not a JavaScript file');
+		return;
+	}
 
 	return function(ready){
 
@@ -57,36 +98,36 @@ var processFile = function(file){
 			fs.stat(file, function(err, stat){
 				if (err) console.warn(('ERROR:').red.invert + ('Could not open ' + file).red);
 				else if (stat.isFile()){
-          var ext = path.extname(file);
-          if (ext != '.js'){
-            console.warn('ERROR:'.red.inverse + ' ' + file + ' is not a JavaScript file');
-            finish(false);
-          } else {
-            next();
-          }
+
+					next();
+
 				} else if (recursive && stat.isDirectory()){
+
 					console.warn(('Recursing into ' + file).yellow);
+
 					fs.readdir(file, function(err, files){
 						if (err) throw err;
+
 						files.forEach(function(_file){
-							if (_file != '..' || _file != '.') {
 
-                var shouldExclude = false;
+							var __file = path.normalize(file + '/' + _file);
+							console.log(__file, excludes);
+							if (_file != '..' && _file != '.' && excludes.indexOf(__file) == -1){
 
-                for (var i=0; i<excludeDir.length; i++) {
-                  var exclude = excludeDir[i];
-                  var basename = path.basename(_file);
-                  if (exclude == basename) {
-                    shouldExclude = true;
-                    break;
-                  }
-                }
+								var fn = processFile(file + '/' + _file);
+								if (fn) flow.push(fn);
 
-                if (!shouldExclude) flow.push(processFile(file + '/' + _file));
-              }
+							}
 						});
+
 						finish(false);
 					});
+
+				} else if (stat.isDirectory()){
+
+					console.warn('ERROR: '.red.inverse + ' ' + file + ' is a directory, maybe use the --recursive option');
+					finish(false);
+
 				} else {
 					console.warn('ERROR: '.red.inverse + ' ' + file + ' is not a file nor a directory');
 					finish(false);
@@ -94,6 +135,8 @@ var processFile = function(file){
 			});
 
 		}).push(function(next, finish){
+
+			// read the file
 
 			fs.readFile(file, function(err, data){
 				if (err){
@@ -107,6 +150,8 @@ var processFile = function(file){
 
 		}).push(function(next){
 
+			// instrument the code
+
 			console.warn(('instrumenting ' + file).blue);
 			var instrument = new Instrument(code, file);
 			instrumented   = instrument.instrument();
@@ -114,6 +159,8 @@ var processFile = function(file){
 			next();
 
 		}).push(function(next){
+
+			// create the target directory
 
 			newFile    = path.resolve(dir, file);
 			var newDir = path.dirname(newFile);
@@ -124,6 +171,8 @@ var processFile = function(file){
 			});
 
 		}).push(function(next){
+
+			// and write the file
 
 			fs.writeFile(newFile, instrumented, function(err){
 				if (err) throw err;
@@ -143,7 +192,8 @@ var processFile = function(file){
 
 files.forEach(function(file){
 
-	flow.push(processFile(file));
+	var fn = processFile(file);
+	if (fn) flow.push(fn);
 
 });
 
