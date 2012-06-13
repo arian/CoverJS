@@ -2,7 +2,7 @@
   "author": "Arian Stolwijk (http://github.com/arian)",
   "name": "coverjs",
   "description": "JSCoverage compatible JavaScript code coverage tool",
-  "version": "0.0.4-alpha",
+  "version": "0.0.5-alpha",
   "repository": {
     "url": "git://github.com/arian/classy.git"
   },
@@ -15,7 +15,7 @@
     "escodegen": "0.x",
     "prime": "0.0.5-alpha",
     "Supersonic": "0.x",
-	"mkdirp": "0.3.3",
+    "mkdirp": "0.3.3",
     "colors": "0.6"
   },
   "devDependencies": {
