@@ -14,8 +14,8 @@
     "esprima": "0.9",
     "escodegen": "0.x",
     "prime": "0.0.5-alpha",
-    "node-fs": "0.1",
     "Supersonic": "0.x",
+	"mkdirp": "0.3.3",
     "colors": "0.6"
   },
   "devDependencies": {

@@ -1,6 +1,7 @@
 "use strict";
 
-var fs         = require('node-fs');
+var fs         = require('fs');
+var mkdirp     = require('mkdirp');
 var path       = require('path');
 var Async      = require('Supersonic').Async;
 var Queue      = require('Supersonic').Queue;
@@ -114,7 +115,7 @@ var processFile = function(file){
 						files.forEach(function(_file){
 
 							var __file = path.normalize(file + '/' + _file);
-							if (_file != '..' && _file != '.' && excludes.indexOf(__file) == -1){
+							if (_file.indexOf('.') != 0 && _file != '..' && _file != '.' && excludes.indexOf(__file) == -1){
 
 								var fn = processFile(file + '/' + _file);
 								if (fn) flow.push(fn);
@@ -166,11 +167,8 @@ var processFile = function(file){
 
 			newFile    = path.resolve(dir, file);
 			var newDir = path.dirname(newFile);
-
-			fs.mkdir(newDir, 511 /* 0777 */, true, function(err){
-				if (err && err.code != 'EEXIST') throw err;
-				next();
-			});
+			mkdirp.sync(newDir, 511);
+			next();
 
 		}).push(function(next){
 
