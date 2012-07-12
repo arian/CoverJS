@@ -81,7 +81,7 @@ excludes.map(function(dir){
 var flow = new Async();
 
 // return a function which executes a series of actions
-var processFile = function(file){
+var processFile = function(file, outFile){
 
 	file = path.normalize(file);
 
@@ -95,7 +95,7 @@ var processFile = function(file){
 
 		var queue = new Queue();
 
-		var code, instrumented, newFile;
+		var code, instrumented;
 
 		queue.push(function(next, finish){
 
@@ -117,7 +117,7 @@ var processFile = function(file){
 							var __file = path.normalize(file + '/' + _file);
 							if (_file.indexOf('.') != 0 && _file != '..' && _file != '.' && excludes.indexOf(__file) == -1){
 
-								var fn = processFile(file + '/' + _file);
+								var fn = processFile(file + '/' + _file, outFile + '/' + _file);
 								if (fn) flow.push(fn);
 
 							}
@@ -165,8 +165,7 @@ var processFile = function(file){
 
 			// create the target directory
 
-			newFile    = path.resolve(dir, file);
-			var newDir = path.dirname(newFile);
+			var newDir = path.dirname(outFile);
 			mkdirp.sync(newDir, 511);
 			next();
 
@@ -174,7 +173,7 @@ var processFile = function(file){
 
 			// and write the file
 
-			fs.writeFile(newFile, instrumented, function(err){
+			fs.writeFile(outFile, instrumented, function(err){
 				if (err) throw err;
 				next();
 			});
@@ -192,7 +191,7 @@ var processFile = function(file){
 
 files.forEach(function(file){
 
-	var fn = processFile(file);
+	var fn = processFile(file, path.join(dir, path.basename(file)));
 	if (fn) flow.push(fn);
 
 });
