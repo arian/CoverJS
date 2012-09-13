@@ -8,7 +8,7 @@
   },
   "main": "cover.js",
   "bin": {
-    "coverjs": "./bin/coverjs"
+    "coverjs": "./bin/cover.js"
   },
   "dependencies": {
     "esprima": "0.9",
