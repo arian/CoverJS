@@ -13,6 +13,7 @@ var Instrument = require('../lib/Instrument');
 var files = [];
 var dir;
 var recursive = false;
+var copyOther = false;
 var excludes = [];
 
 var args = process.argv.slice(2);
@@ -37,10 +38,15 @@ for (var i = 0; i < args.length; i++){
 		continue;
 	}
 
-	if (arg == '--exclude' || arg == '-e'){
-		excludes.push(args[++i]);
-		continue;
-	}
+  if (arg == '--exclude' || arg == '-e'){
+    excludes.push(args[++i]);
+    continue;
+  }
+
+  if (arg == '--copy-other' || arg == '-c'){
+    copyOther = true;
+    continue;
+  }
 
 	if (arg == '--help' || arg == '-h'){
 
@@ -51,6 +57,7 @@ for (var i = 0; i < args.length; i++){
 			'    -v, --version                output version information\n' +
 			'    -o, --output <directory>     directory to output the instrumented files\n' +
 			'    -r, --recursive              recurse in subdirectories\n' +
+			'    -c, --copy-other             copy non-js files as well\n' +
 			'    -x, --exclude <directories>  exclude these directories' +
 			'\n\n';
 
@@ -86,7 +93,7 @@ var processFile = function(file, outFile){
 	file = path.normalize(file);
 
 	var ext = path.extname(file);
-	if (ext && ext != '.js'){
+	if (ext && ext != '.js' && !copyOther){
 		console.warn('ERROR:'.red.inverse + ' ' + file + ' is not a JavaScript file');
 		return;
 	}
@@ -154,11 +161,15 @@ var processFile = function(file, outFile){
 		}).push(function(next){
 
 			// instrument the code
-
-			console.warn(('instrumenting ' + file).blue);
-			var instrument = new Instrument(code, file);
-			instrumented   = instrument.instrument();
-
+			var instrument;
+			if (copyOther && path.extname(file) != '.js') {
+				console.warn(('copying ' + file + ' without instrumentation').blue);
+				instrumented = code;
+			} else {
+				console.warn(('instrumenting ' + file).blue);
+				instrument = new Instrument(code, file);
+				instrumented   = instrument.instrument();
+			}
 			next();
 
 		}).push(function(next){
