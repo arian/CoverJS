@@ -4,7 +4,7 @@
   "description": "JSCoverage compatible JavaScript code coverage tool",
   "version": "0.0.7-alpha",
   "repository": {
-    "url": "git://github.com/arian/classy.git"
+    "url": "git://github.com/arian/CoverJS.git"
   },
   "main": "cover.js",
   "bin": {
