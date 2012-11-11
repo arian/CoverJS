@@ -8,7 +8,7 @@
   },
   "main": "cover.js",
   "bin": {
-    "coverjs": "./bin/cover.js"
+    "coverjs": "./bin/cover.js",
     "coverjs-report": "./bin/reporter.js"
   },
   "dependencies": {
