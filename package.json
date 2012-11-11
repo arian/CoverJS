@@ -2,7 +2,7 @@
   "author": "Arian Stolwijk (http://github.com/arian)",
   "name": "coverjs",
   "description": "JSCoverage compatible JavaScript code coverage tool",
-  "version": "0.0.9-alpha",
+  "version": "0.0.10-alpha",
   "repository": {
     "url": "git://github.com/arian/CoverJS.git"
   },
