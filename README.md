@@ -65,6 +65,9 @@ generated:
 
 	cat ./cov.json | coverjs-report -r html > cov.html
 
+See the [prime Makefile](https://github.com/mootools/prime/blob/879918f05/Makefile#L40-49)
+for an example.
+
 #### Screenshot
 
 ![Screenshot](http://i.imgur.com/lxGpb.png)
