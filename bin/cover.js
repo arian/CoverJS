@@ -15,6 +15,8 @@ var files = [];
 var dir;
 var recursive = false;
 var excludes = [];
+var template;
+var result;
 
 var args = process.argv.slice(2);
 if (!args.length) args.push('--help');
@@ -43,6 +45,16 @@ for (var i = 0; i < args.length; i++){
 		continue;
 	}
 
+	if (arg == '--template' || arg == '-t'){
+		template = args[++i];
+		continue;
+	}
+
+	if (arg == '--result'){
+		result = args[++i];
+		continue;
+	}
+
 	if (arg == '--help' || arg == '-h'){
 
 		var help = '\n\n' +
@@ -52,7 +64,9 @@ for (var i = 0; i < args.length; i++){
 			'    -v, --version                output version information\n' +
 			'    -o, --output <directory>     directory to output the instrumented files\n' +
 			'    -r, --recursive              recurse in subdirectories\n' +
-			'    -x, --exclude <directories>  exclude these directories' +
+			'    -x, --exclude <directories>  exclude these directories\n' +
+			'    -t, --template <template>    which template should be used which exports the __$coverObject variable\n' +
+			'        --result <file>          if --template option is node, also a result file should be given where the output is written to.' +
 			'\n\n';
 
 		console.log(help);
@@ -116,7 +130,7 @@ var processFile = function(file, outFile){
 						files.forEach(function(_file){
 
 							var __file = path.normalize(file + '/' + _file);
-							if (_file.indexOf('.') != 0 && _file != '..' && _file != '.' && excludes.indexOf(__file) == -1){
+							if (_file.indexOf('.') !== 0 && _file != '..' && _file != '.' && excludes.indexOf(__file) == -1){
 
 								var fn = processFile(file + '/' + _file, outFile + '/' + _file);
 								if (fn) flow.push(fn);
@@ -157,7 +171,11 @@ var processFile = function(file, outFile){
 			// instrument the code
 
 			console.warn(('instrumenting ' + file).blue);
-			var instrument = new Instrument(code, file);
+			var instrument = new Instrument(code, {
+				template: template,
+				result: result && path.resolve(result),
+				name: file
+			});
 			instrumented   = instrument.instrument();
 
 			next();

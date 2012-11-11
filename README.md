@@ -28,10 +28,13 @@ To instrument the code, CoverJS comes with a CLI tool:
 
 ### Reporting
 
-The instrumented code should be executed to count the number of calls for each statement.
+The instrumented code should be executed to count the number of calls for each
+statement.
+
 Usually your tests will try to cover each statement.
 
-An example code that will capture the output and generate a HTML report would look like:
+An example code that will capture the output and generate a HTML report would
+look like:
 
 ```js
 
@@ -48,6 +51,19 @@ The output stream can be redirected to a file using
 	node test.js > report.html
 
 so the result can be viewed in a browser
+
+#### node
+
+There are different templates with which what the instrumented code should
+start and end. For node there exists an template that saves the output as a
+JSON file, which can later be used as to generate a HTML report.
+
+	coverjs --template node --report ./cov.json file.js
+
+With the `coverjs-report` tool, which reads from `stdin`, an HTML output can be
+generated:
+
+	cat ./cov.json | coverjs-report -r html > cov.html
 
 #### Screenshot
 
