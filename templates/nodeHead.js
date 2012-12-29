@@ -12,7 +12,9 @@ var __$coverCall, __$coverInit, __$coverInitRange;
 		json[name] = {__code: code};
 	});
 	__$coverInitRange = update(function(json, name, range){
-		json[name][range] = 0;
+		if (!json[name][range]){
+			json[name][range] = 0;
+		}
 	});
 	__$coverCall = update(function(json, name, range){
 		json[name][range]++;

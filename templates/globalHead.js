@@ -4,11 +4,13 @@ if (typeof __$coverObject === "undefined"){
 	else throw new Error("cannot find the global scope");
 }
 var __$coverInit = function(name, code){
-	__$coverObject[name] = {__code: code}
-}
+	__$coverObject[name] = {__code: code};
+};
 var __$coverInitRange = function(name, range){
-	__$coverObject[name][range] = 0;
-}
+	if (!__$coverObject[name][range]){
+		__$coverObject[name][range] = 0;
+	}
+};
 var __$coverCall = function(name, range){
 	__$coverObject[name][range]++;
-}
+};
