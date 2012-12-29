@@ -101,7 +101,7 @@ var processFile = function(file, outFile){
 	file = path.normalize(file);
 
 	var ext = path.extname(file);
-	if (ext && ext != '.js'){
+	if (fs.statSync(file).isFile() && ext && ext != '.js'){
 		console.warn('ERROR:'.red.inverse + ' ' + file + ' is not a JavaScript file');
 		return;
 	}
