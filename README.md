@@ -24,7 +24,9 @@ statements, which should result in a more precise result.
 
 To instrument the code, CoverJS comes with a CLI tool:
 
-	coverjs --output cov/ file.js test/*
+```bash
+coverjs --output cov/ file.js test/*
+```
 
 ### Reporting
 
@@ -37,7 +39,6 @@ An example code that will capture the output and generate a HTML report would
 look like:
 
 ```js
-
 var HTMLReporter = require('../lib/reporters/HTMLReporter');
 
 require('../test-cov/test/fixture.js');
@@ -48,7 +49,9 @@ console.log(reporter.report());
 
 The output stream can be redirected to a file using
 
-	node test.js > report.html
+```bash
+node test.js > report.html
+```
 
 so the result can be viewed in a browser
 
@@ -58,12 +61,16 @@ There are different templates with which what the instrumented code should
 start and end. For node there exists an template that saves the output as a
 JSON file, which can later be used as to generate a HTML report.
 
-	coverjs --template node --report ./cov.json file.js
+```bash
+coverjs --template node --report ./cov.json file.js
+```
 
 With the `coverjs-report` tool, which reads from `stdin`, an HTML output can be
 generated:
 
-	cat ./cov.json | coverjs-report -r html > cov.html
+```bash
+cat ./cov.json | coverjs-report -r html > cov.html
+```
 
 See the [prime Makefile](https://github.com/mootools/prime/blob/879918f05/Makefile#L40-49)
 for an example.
@@ -72,10 +79,9 @@ for an example.
 
 ![Screenshot](http://i.imgur.com/lxGpb.png)
 
-
 ## MIT License
 
-Copyright (c) <2013> <Arian Stolwijk>
+Copyright (c) 2013 Arian Stolwijk
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
