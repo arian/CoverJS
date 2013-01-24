@@ -13,11 +13,11 @@
     "coverjs-report": "./bin/reporter.js"
   },
   "dependencies": {
-    "esprima": "0.9",
-    "escodegen": "0.x",
-    "prime": "0.0.5-alpha",
+    "esprima": "1.0",
+    "escodegen": "0.0.x",
+    "prime": "0.1",
     "Supersonic": "0.x",
-    "mkdirp": "0.3.3",
+    "mkdirp": "0.3",
     "colors": "0.6"
   },
   "devDependencies": {
