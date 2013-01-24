@@ -6,6 +6,7 @@
   "repository": {
     "url": "git://github.com/arian/CoverJS.git"
   },
+  "license": "MIT",
   "main": "cover.js",
   "bin": {
     "coverjs": "./bin/cover.js",
